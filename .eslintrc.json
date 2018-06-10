@@ -26,6 +26,8 @@
         "constructor-super": "warn",
         "valid-typeof": "warn",
         "semi": [2, "always"],
-        "no-console": "off"
+        "no-console": "off",
+        "object-curly-spacing": [2, "always"],
+        "react/jsx-curly-spacing": [2, {"when": "always", "allowMultiline": false}]
     }
 }

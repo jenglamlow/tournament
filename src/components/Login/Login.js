@@ -13,8 +13,9 @@ const Login = () => (
         height: 100%;
       }
     `}</style>
-    <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
-      <Grid.Column style={{ maxWidth: 450 }}>
+
+    <Grid textAlign='center' style={ { height: '100%' } } verticalAlign='middle'>
+      <Grid.Column style={ { maxWidth: 450 } }>
         <Header as='h2' color='teal' textAlign='center'>
           Log-in to your account
         </Header>
@@ -35,7 +36,7 @@ const Login = () => (
           </Segment>
         </Form>
         <Message>
-          New to us? <Link to={routes.SIGN_UP}>Sign Up</Link>
+          New to us? <Link to={ routes.SIGN_UP }>Sign Up</Link>
         </Message>
       </Grid.Column>
     </Grid>

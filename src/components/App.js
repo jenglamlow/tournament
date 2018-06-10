@@ -16,16 +16,16 @@ const App = () =>
       <hr />
 
       <Route
-        exact path={routes.LANDING}
-        component={() => <LandingPage />}
+        exact path={ routes.LANDING }
+        component={ () => <LandingPage /> }
       />
       <Route
-        exact path={routes.SIGN_UP}
-        component={() => <SignUp />}
+        exact path={ routes.SIGN_UP }
+        component={ () => <SignUp /> }
       />
       <Route
-        exact path={routes.LOGIN}
-        component={() => <Login />}
+        exact path={ routes.LOGIN }
+        component={ () => <Login /> }
       />
     </div>
   </BrowserRouter>;
