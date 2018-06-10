@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import PropTypes from 'prop-types';
 
 import { auth, db } from '../../firebase';
+import { signup } from '../../redux/modules/user';
 
 const INITIAL_STATE = {
   username: 'jeng',
@@ -30,6 +31,11 @@ class SignUp extends Component {
   }
 
   handleSubmit(values, form) {
+
+    db.checkUsername('jeng').then(a => {
+      console.log(a);
+    });
+
     // auth.doCreateUserWithEmailAndPassword(values.email, values.password)
     //   .then(user => {
     //     // Create a user in database
@@ -147,4 +153,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(SignUp);
+export default connect(mapStateToProps, { signup })(SignUp);

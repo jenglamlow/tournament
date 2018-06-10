@@ -1,48 +1,38 @@
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/mapTo';
+import 'rxjs/add/operator/mergeMap';
+
 
 // Actions
-const PING = 'rxjs/ping/PING';
-const PONG = 'rxjs/pong/PONG';
+const SIGNUP = 'rxjs/auth/SIGNUP';
 
 // Reducer
 const initialState = {
-  isPinging: false
 };
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
-    case PING:
+    case SIGNUP:
       return {
         ...state,
-        isPinging: true
       };
 
-    case PONG:
-      return {
-        ...state,
-        isPinging: false
-      };
     default: 
       return state;
   }
 }
 
 // Action Creators
-export function ping() {
+export function signup(credential) {
   return { 
-    type: PING 
-  };
-}
-
-export function pong() {
-  return { 
-    type: PONG 
+    type: SIGNUP,
+    credential
   };
 }
 
 // Epics
-export const userEpic = action$ =>
-  action$.ofType(PING)
-    .delay(1000) 
-    .mapTo({ type: PONG });
+export const signUpEpic = action$ =>
+  action$.ofType(SIGNUP)
+    .mergeMap(action => {
+      console.log(action);
+    });

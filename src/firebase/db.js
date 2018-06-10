@@ -14,6 +14,6 @@ export const createUser = (id, username, email) =>
 export const getUsers = () =>
   db.ref('users').once('value');
 
-export const checkUsername = (username) => {
-  db.ref('username').once('value');
-};
+export const checkUsername = (name) =>
+  db.ref('usernames').child(name).once('value')
+    .then(snapshot => snapshot.exists());

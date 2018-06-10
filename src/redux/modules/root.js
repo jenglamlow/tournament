@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
 
-import user, { userEpic } from './user';
+import user, { signUpEpic } from './user';
 
 export const rootEpic = combineEpics(
-  userEpic,
+  signUpEpic,
 );
 
 export const rootReducer = combineReducers({
