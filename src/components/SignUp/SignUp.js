@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import PropTypes from 'prop-types';
 
 import { auth, db } from '../../firebase';
-import { signup } from '../../redux/modules/user';
+import { signup } from '../../redux/modules/auth';
 
 const INITIAL_STATE = {
   username: 'jeng',
@@ -31,10 +31,9 @@ class SignUp extends Component {
   }
 
   handleSubmit(values, form) {
+    this.props.signup(values);
 
-    db.checkUsername('jeng').then(a => {
-      console.log(a);
-    });
+    form.setSubmitting(false);
 
     // auth.doCreateUserWithEmailAndPassword(values.email, values.password)
     //   .then(user => {
@@ -144,12 +143,10 @@ class SignUp extends Component {
 }
 
 SignUp.propTypes = {
-  // isPinging: PropTypes.bool,
-  // ping: PropTypes.func
+  signup: PropTypes.func
 };
 
 const mapStateToProps = state => ({
-  // isPinging: state.ping.isPinging,
 });
 
 

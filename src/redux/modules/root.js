@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux';
-import { combineEpics } from 'redux-observable';
+import { all } from 'redux-saga/effects';
 
-import user, { signUpEpic } from './user';
+import user, { authSagas } from './auth';
 
-export const rootEpic = combineEpics(
-  signUpEpic,
-);
+export default function* rootSaga() {
+  yield all([
+    ...authSagas,
+  ]);
+}
 
 export const rootReducer = combineReducers({
   user

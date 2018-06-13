@@ -1,16 +1,16 @@
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/mapTo';
-import 'rxjs/add/operator/mergeMap';
-
+import { auth, db } from '../../firebase';
+import { takeEvery } from 'redux-saga/effects';
 
 // Actions
 const SIGNUP = 'rxjs/auth/SIGNUP';
+const SIGNUP_DONE = 'rxjs/auth/SIGNUP_DONE';
 
 // Reducer
 const initialState = {
 };
 
 export default function reducer(state = initialState, action = {}) {
+  console.log('reducer', action);
   switch (action.type) {
     case SIGNUP:
       return {
@@ -30,9 +30,11 @@ export function signup(credential) {
   };
 }
 
-// Epics
-export const signUpEpic = action$ =>
-  action$.ofType(SIGNUP)
-    .mergeMap(action => {
-      console.log(action);
-    });
+// Sagas
+function signUpSaga(data) {
+  console.log('saga', data);
+}
+
+export const authSagas = [
+  takeEvery(SIGNUP, signUpSaga),
+];
