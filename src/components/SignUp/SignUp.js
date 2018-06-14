@@ -5,13 +5,12 @@ import { connect } from 'react-redux';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
 
-import { auth, db } from '../../firebase';
 import { signup } from '../../redux/modules/auth';
 
 const INITIAL_STATE = {
-  username: 'jeng',
-  email: 'jenglamlow@gmail.com',
-  password: '12345678'
+  username: '',
+  email: '',
+  password: ''
 };
 
 const SCHEMA = yup.object().shape({
@@ -30,29 +29,8 @@ class SignUp extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(values, form) {
+  handleSubmit(values) {
     this.props.signup(values);
-
-    form.setSubmitting(false);
-
-    // auth.doCreateUserWithEmailAndPassword(values.email, values.password)
-    //   .then(user => {
-    //     // Create a user in database
-    //     db.doCreateUser(user.user.uid, values.username, values.email)
-    //     .then(() => {
-    //       console.log('ok');
-    //     })
-    //     .catch(error => {
-    //       form.setErrors({
-    //         signup: error.message
-    //       });
-    //     });
-    //   })
-    //   .catch(error => {
-    //     form.setErrors({
-    //       signup: error.message
-    //     });
-    //   });
   }
 
   render() {
@@ -67,8 +45,7 @@ class SignUp extends Component {
           touched,
           handleBlur,
           handleChange,
-          handleSubmit,
-          isSubmitting,
+          handleSubmit
         }) => (
             <div className='signup-form'>
               <style>{`
@@ -80,11 +57,11 @@ class SignUp extends Component {
               `}</style>
               <Grid centered style={ { height: '100%' } } verticalAlign='middle'>
                 <Grid.Column style={ { maxWidth: 900 } }>
-                  { errors.signup && ( 
+                  { this.props.error && ( 
                     <Message
                       error
                       header='Sign Up Error'
-                      content={ errors.signup }
+                      content={ this.props.errorMessage }
                     />
                   )}
                   <Header as='h2' color='teal' textAlign='center'>
@@ -128,7 +105,7 @@ class SignUp extends Component {
                         />
                         {errors.password && touched.password && <div style={ { color: 'red' } }>{errors.password}</div>}
                       </Form.Field>
-                      <Button type="submit" color='teal' fluid size='large' disabled={ isSubmitting }>
+                      <Button type="submit" color='teal' fluid size='large' disabled={ this.props.isSubmitting }>
                         Sign Up
                       </Button>
                     </Form>
@@ -143,10 +120,16 @@ class SignUp extends Component {
 }
 
 SignUp.propTypes = {
-  signup: PropTypes.func
+  signup: PropTypes.func,
+  isSubmitting: PropTypes.bool,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string
 };
 
 const mapStateToProps = state => ({
+  isSubmitting: state.user.submitting,
+  error: state.user.error,
+  errorMessage: state.user.errorMessage
 });
 
 

@@ -3,28 +3,21 @@ import {
 } from './firebase';
 
 // User API
-
 export const createUser = (id, username, email) =>
   db.ref(`users/${id}`).set({
     username,
     email,
   });
 
-export const getUsers = () =>
-  db.ref('users').once('value');
+export const createUsername = (username, id) =>
+  db.ref(`usernames`).child(username).set(id);
 
-export const checkUsername = (name) =>
-  db.ref('usernames').child(name).once('value')
-    .then((snapshot) => {
-      snapshot.exists();
-    });
-
-export function isUsernameExist(name) {
+export function checkUsername(name) {
   return new Promise((resolve, reject) => {
     db.ref('usernames').child(name).once('value')
       .then((snapshot) => {
         if (snapshot.exists()) {
-          resolve('exist');
+          reject( { message: 'Username Exist' });
         } else {
           resolve();
         }

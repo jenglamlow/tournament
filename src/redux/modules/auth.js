@@ -1,20 +1,39 @@
+import { takeLatest, call, put } from 'redux-saga/effects';
 import { auth, db } from '../../firebase';
-import { takeEvery } from 'redux-saga/effects';
 
 // Actions
 const SIGNUP = 'rxjs/auth/SIGNUP';
-const SIGNUP_DONE = 'rxjs/auth/SIGNUP_DONE';
+const SIGNUP_SUCCESS = 'rxjs/auth/SIGNUP_SUCCESS';
+const SIGNUP_FAILURE = 'rxjs/auth/SIGNUP_FAILURE';
 
 // Reducer
 const initialState = {
+  submitting: false,
+  error: false,
+  errorMessage: ''
 };
 
 export default function reducer(state = initialState, action = {}) {
-  console.log('reducer', action);
   switch (action.type) {
     case SIGNUP:
       return {
         ...state,
+        submitting: true
+      };
+
+    case SIGNUP_SUCCESS:
+      return {
+        ...state,
+        submitting: false,
+        error: false
+      };
+
+    case SIGNUP_FAILURE:
+      return {
+        ...state,
+        submitting: false,
+        error: true,
+        errorMessage: action.error.message
       };
 
     default: 
@@ -30,11 +49,49 @@ export function signup(credential) {
   };
 }
 
-// Sagas
-function signUpSaga(data) {
-  console.log('saga', data);
+export function login(credential) {
+  return { 
+    type: SIGNUP,
+    credential
+  };
 }
 
+// Sagas
+function* signUpSaga(data) {
+  try {
+    // Check if the username exist
+    yield call(db.checkUsername, data.credential.username);
+
+    // Create Username with Email and Password
+    const user = yield call(
+      auth.doCreateUserWithEmailAndPassword, 
+      data.credential.email,
+      data.credential.password
+    );
+
+    // Create user in database
+    yield call(db.createUser, user.user.uid, data.credential.username, data.credential.email);
+
+    // Create username list in database
+    yield call(db.createUsername, data.credential.username, user.user.uid);
+
+    yield put({ type: SIGNUP_SUCCESS });
+  } 
+  catch (error) {
+    yield put({ type: SIGNUP_FAILURE, error });
+  }
+}
+
+function* loginSaga(data) {
+  try {
+  } 
+  catch (error) {
+    yield put({ type: SIGNUP_FAILURE, error });
+  }
+}
+
+// Watchers
 export const authSagas = [
-  takeEvery(SIGNUP, signUpSaga),
+  takeLatest(SIGNUP, signUpSaga),
+  takeLatest(SIGNUP, loginSaga),
 ];
