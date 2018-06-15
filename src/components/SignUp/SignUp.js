@@ -79,7 +79,7 @@ class SignUp extends Component {
                           value={ values.username }
                           error={ errors.username && touched.username }
                         />
-                        {errors.username && touched.username && <div style={ { color: 'red' } }>Required</div>}
+                        {errors.username && touched.username && <div style={ { color: 'red' } }> { errors.username }</div>}
                       </Form.Field>
                       <Form.Field>
                         <label>Email Address</label>
@@ -91,7 +91,7 @@ class SignUp extends Component {
                           value={ values.email }
                           error={ errors.email && touched.email }
                         />
-                        {errors.email && touched.email && <div style={ { color: 'red' } }>Required</div>}
+                        {errors.email && touched.email && <div style={ { color: 'red' } }> { errors.email }</div>}
                       </Form.Field>
                       <Form.Field>
                         <label>Password</label>
@@ -103,7 +103,7 @@ class SignUp extends Component {
                           value={ values.password }
                           error={ errors.password && touched.password }
                         />
-                        {errors.password && touched.password && <div style={ { color: 'red' } }>Required</div>}
+                        {errors.password && touched.password && <div style={ { color: 'red' } }>{ errors.password }</div>}
                       </Form.Field>
                       <Button type="submit" color='teal' fluid size='large' disabled={ this.props.isSubmitting }>
                         Sign Up

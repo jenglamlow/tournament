@@ -2,9 +2,13 @@ import { takeLatest, call, put } from 'redux-saga/effects';
 import { auth, db } from '../../firebase';
 
 // Actions
-const SIGNUP = 'rxjs/auth/SIGNUP';
-const SIGNUP_SUCCESS = 'rxjs/auth/SIGNUP_SUCCESS';
-const SIGNUP_FAILURE = 'rxjs/auth/SIGNUP_FAILURE';
+const SIGNUP = 'redux/auth/SIGNUP';
+const SIGNUP_SUCCESS = 'redux/auth/SIGNUP_SUCCESS';
+const SIGNUP_FAILURE = 'redux/auth/SIGNUP_FAILURE';
+const LOGIN = 'redux/auth/LOGIN';
+const LOGIN_SUCCESS = 'redux/auth/LOGIN_SUCCESS';
+const LOGIN_FAILURE = 'redux/auth/LOGIN_FAILURE';
+
 
 // Reducer
 const initialState = {
@@ -14,20 +18,26 @@ const initialState = {
 };
 
 export default function reducer(state = initialState, action = {}) {
+  console.log(action);
   switch (action.type) {
+    case LOGIN:
     case SIGNUP:
       return {
         ...state,
-        submitting: true
+        submitting: true,
+        errorMessage: ''
       };
 
+    case LOGIN_SUCCESS:
     case SIGNUP_SUCCESS:
       return {
         ...state,
         submitting: false,
-        error: false
+        error: false,
+        errorMessage: ''
       };
 
+    case LOGIN_FAILURE:
     case SIGNUP_FAILURE:
       return {
         ...state,
@@ -51,7 +61,7 @@ export function signup(credential) {
 
 export function login(credential) {
   return { 
-    type: SIGNUP,
+    type: LOGIN,
     credential
   };
 }
@@ -60,7 +70,13 @@ export function login(credential) {
 function* signUpSaga(data) {
   try {
     // Check if the username exist
-    yield call(db.checkUsername, data.credential.username);
+    const isExist = yield call(db.isUserExist, data.credential.username);
+
+    if (isExist) {
+      throw ({
+        message: "Username Exist"
+      });
+    }
 
     // Create Username with Email and Password
     const user = yield call(
@@ -84,14 +100,21 @@ function* signUpSaga(data) {
 
 function* loginSaga(data) {
   try {
+    yield call(
+      auth.doSignInWithEmailAndPassword,
+      data.credential.email,
+      data.credential.password
+    );
+
+    yield put({ type: LOGIN_SUCCESS });
   } 
   catch (error) {
-    yield put({ type: SIGNUP_FAILURE, error });
+    yield put({ type: LOGIN_FAILURE, error });
   }
 }
 
 // Watchers
 export const authSagas = [
   takeLatest(SIGNUP, signUpSaga),
-  takeLatest(SIGNUP, loginSaga),
+  takeLatest(LOGIN, loginSaga),
 ];

@@ -12,18 +12,25 @@ export const createUser = (id, username, email) =>
 export const createUsername = (username, id) =>
   db.ref(`usernames`).child(username).set(id);
 
-export function checkUsername(name) {
+export const getUsername = (name) =>
+  db.ref('usernames').child(name).once('value');
+
+export function getEmail(name) {
+  return db.ref('usernames').child(name).once('value');
+}
+
+export function isUserExist(name) {
   return new Promise((resolve, reject) => {
-    db.ref('usernames').child(name).once('value')
+    getUsername(name)
       .then((snapshot) => {
         if (snapshot.exists()) {
-          reject( { message: 'Username Exist' });
+          resolve(true);
         } else {
-          resolve();
+          resolve(false);
         }
       })
       .catch(error => {
         reject(error);
       });
-  });
+    });
 }

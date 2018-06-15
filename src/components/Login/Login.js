@@ -10,13 +10,13 @@ import * as routes from '../../constants/routes';
 import { login } from '../../redux/modules/auth';
 
 const INITIAL_STATE = {
-  login: '',
+  email: '',
   password: ''
 };
 
 const SCHEMA = yup.object().shape({
-  login: yup.string().required(),
-  password: yup.string().required().min(8),
+  email: yup.string().required().email(),
+  password: yup.string().required(),
 });
 
 class Login extends Component {
@@ -30,8 +30,7 @@ class Login extends Component {
   }
 
   handleLogin(value) {
-    console.log(value);
-    // this.props.login()
+    this.props.login(value);
   }
 
   render() {
@@ -59,6 +58,13 @@ class Login extends Component {
 
               <Grid textAlign='center' style={ { height: '100%' } } verticalAlign='middle'>
                 <Grid.Column style={ { maxWidth: 450 } }>
+                  { this.props.error && ( 
+                    <Message
+                      error
+                      header='Sign Up Error'
+                      content={ this.props.errorMessage }
+                    />
+                  )}
                   <Header as='h2' color='teal' textAlign='center'>
                     Log-in to your account
                   </Header>
@@ -69,15 +75,15 @@ class Login extends Component {
                           fluid 
                           icon='user' 
                           iconPosition='left' 
-                          placeholder='Username or email' 
+                          placeholder='Email'
                           type="text"
-                          name="login"
-                          value={ values.login }
+                          name="email"
+                          value={ values.email }
                           onChange={ handleChange }
                           onBlur={ handleBlur }
-                          error={ errors.login && touched.login }
+                          error={ errors.email && touched.email }
                         />
-                        {errors.login && touched.login && <div style={ { color: 'red' } }>Required</div>}
+                        {errors.email && touched.email && <div style={ { color: 'red' } }> { errors.email }</div>}
                       </Form.Field>
                       <Form.Field>
                         <Form.Input
@@ -92,7 +98,7 @@ class Login extends Component {
                           onBlur={ handleBlur }
                           error={ errors.password && touched.password }
                         />
-                        {errors.password && touched.password && <div style={ { color: 'red' } }>Required</div>}
+                        {errors.password && touched.password && <div style={ { color: 'red' } }>{ errors.password }</div>}
                       </Form.Field>
 
                       <Button color='teal' fluid size='large' type="submit" disabled={ this.props.isSubmitting }>
@@ -113,17 +119,17 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  // signup: PropTypes.func,
+  login: PropTypes.func,
   isSubmitting: PropTypes.bool,
-  // error: PropTypes.bool,
-  // errorMessage: PropTypes.string
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string
 };
 
 const mapStateToProps = state => ({
   isSubmitting: state.user.submitting,
-  // error: state.user.error,
-  // errorMessage: state.user.errorMessage
+  error: state.user.error,
+  errorMessage: state.user.errorMessage
 });
 
 
-export default connect(mapStateToProps, {})(Login);
+export default connect(mapStateToProps, { login })(Login);
