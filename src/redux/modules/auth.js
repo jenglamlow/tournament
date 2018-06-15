@@ -1,5 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import { auth, db } from '../../firebase';
+import { push } from 'react-router-redux';
 
 // Actions
 const SIGNUP = 'redux/auth/SIGNUP';
@@ -105,6 +106,8 @@ function* loginSaga(data) {
       data.credential.email,
       data.credential.password
     );
+
+    yield put(push('/home'));
 
     yield put({ type: LOGIN_SUCCESS });
   } 

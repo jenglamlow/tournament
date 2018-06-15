@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { all } from 'redux-saga/effects';
+import { routerReducer } from 'react-router-redux';
 
 import user, { authSagas } from './auth';
 
@@ -10,5 +11,6 @@ export default function* rootSaga() {
 }
 
 export const rootReducer = combineReducers({
-  user
+  user,
+  router: routerReducer
 });
