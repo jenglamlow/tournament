@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { auth, db } from '../../firebase';
 import { push } from 'react-router-redux';
+import { getFirebase } from 'react-redux-firebase';
 
 // Actions
 const SIGNUP = 'redux/auth/SIGNUP';
@@ -53,44 +53,33 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function signup(credential) {
-  return { 
-    type: SIGNUP,
-    credential
-  };
-}
-
-export function login(credential) {
-  return { 
-    type: LOGIN,
-    credential
-  };
-}
+export const signup = (credential) => ({ type: SIGNUP, credential });
+export const login = (credential) => ({ type: LOGIN, credential });
 
 // Sagas
 function* signUpSaga(data) {
   try {
-    // Check if the username exist
-    const isExist = yield call(db.isUserExist, data.credential.username);
-
-    if (isExist) {
-      throw ({
-        message: "Username Exist"
+    yield call(getFirebase().createUser, {
+        email: data.credential.email,
+        password: data.credential.password,
+      }, {
+        username: data.credential.username,
+        email: data.credential.email
       });
-    }
 
-    // Create Username with Email and Password
-    const user = yield call(
-      auth.doCreateUserWithEmailAndPassword, 
-      data.credential.email,
-      data.credential.password
-    );
+    // // Check if the username exist
+    // const isExist = yield call(db.isUserExist, data.credential.username);
 
-    // Create user in database
-    yield call(db.createUser, user.user.uid, data.credential.username, data.credential.email);
+    // if (isExist) {
+    //   throw ({
+    //     message: "Username Exist"
+    //   });
+    // }
 
-    // Create username list in database
-    yield call(db.createUsername, data.credential.username, user.user.uid);
+    // // Create username list in database
+    // yield call(db.createUsername, data.credential.username, user.user.uid);
+
+    yield put(push('/home'));
 
     yield put({ type: SIGNUP_SUCCESS });
   } 
@@ -101,11 +90,15 @@ function* signUpSaga(data) {
 
 function* loginSaga(data) {
   try {
-    yield call(
-      auth.doSignInWithEmailAndPassword,
-      data.credential.email,
-      data.credential.password
-    );
+    yield call(getFirebase().login, {
+      email: data.credential.email,
+      password: data.credential.password,
+    });
+    // yield call(
+    //   auth.doSignInWithEmailAndPassword,
+    //   data.credential.email,
+    //   data.credential.password
+    // );
 
     yield put(push('/home'));
 
